@@ -1,0 +1,17 @@
+listver:5
+Created: 20-Sep-2016
+Version: cpca_1.2.2(19)-dev
+subjects:4
+runs:1
+minRunCount:1
+groups:0
+multipleFrequency:0
+frequencies:0
+frlabels:<na>
+base_directory:/data1/Ryan/example_data_Multiple_Subjects
+format:{subject_dir}
+list:fsn*.img
+scandir:{subject_dir} sdir:s01e3 id:s01e3 group:<na> frequency:<na> runs:<na>
+scandir:{subject_dir} sdir:s03e3 id:s03e3 group:<na> frequency:<na> runs:<na>
+scandir:{subject_dir} sdir:sz01e3 id:sz01e3 group:<na> frequency:<na> runs:<na>
+scandir:{subject_dir} sdir:sz02e3 id:sz02e3 group:<na> frequency:<na> runs:<na>

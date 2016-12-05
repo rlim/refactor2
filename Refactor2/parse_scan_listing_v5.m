@@ -195,7 +195,6 @@ end
 
 for SubjectNo = 1:scan_information.NumSubjects
     for ii = 1:scan_information.NumRuns
-        check_rp_file( SubjectNo, ii, scan_information);
         check_trial_file( SubjectNo, ii , scan_information);
     end;
 end;
@@ -225,25 +224,7 @@ end;
 
 
 
-function scan_information = check_rp_file( SubjectNo, RunNo, scan_information )
 
-
-if iscellstr(scan_information.SubjDir(SubjectNo,RunNo))
-    
-    %    filespec=strcat( scan_information.BaseDir,filesep, char(scan_information.SubjDir(SubjectNo,RunNo)),filesep);
-    filespec = [ scan_information.BaseDir filesep char(scan_information.SubjDir(SubjectNo,RunNo)) filesep ];
-    
-    p = dir( [filespec 'rp_*.txt'] );
-    if ~isempty(p)
-        f = load( [filespec p(1).name] );
-        [r c] = get_subject_scan_count( SubjectNo, RunNo );
-        
-        if ( size(f,1) == r )
-            scan_information.processing.subjects.rp_count = scan_information.processing.subjects.rp_count + 1;
-        end;
-    end;
-    
-end;
 
 
 function scan_information=check_trial_file( SubjectNo, RunNo, scan_information)

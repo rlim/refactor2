@@ -112,6 +112,14 @@ classdef Participant < handle
 			
 			par.path_to_GZ = gz;
 		end
+		function set_common_data(par, cd) 
+			par.CommonData.ID_List = cd.ID_List;
+			par.CommonData.tsum_w_trends = cd.tsum_w_trends;
+			par.CommonData.tsum_trends = cd.tsum_trends;
+			par.CommonData.tsum = cd.tsum;
+			par.CommonData.total_scans = cd.total_scans;
+			
+		end
 		%% getters
 		function output = getExperiment(par)
 			output = par.experiment;

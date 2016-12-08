@@ -63,6 +63,9 @@ classdef Experiment < handle
 		function set_mean_tr(obj, mt)
 			obj.mean_tr = mt;
 		end
+		function set_common_data(obj, cd) 
+			set_common_data(obj.participants(1,1), cd);
+		end
         
         %% Getter Methods
         function output = get_list_spec(obj)

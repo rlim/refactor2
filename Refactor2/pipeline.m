@@ -1,7 +1,9 @@
 % 
 % %a = Create_Experiment;
 % %save('Exp.mat', 'a');
-% load([pwd filesep 'Exp.mat']); %%temp
+ load(['data1/Ryan/Refactor_MultiStudy/testingWM' filesep 'exp2.mat']); %%temp
+ load(['data1/Ryan/Refactor_MultiStudy/testingTGT' filesep 'exp2.mat']);
+ set_common_data(b, com_dat);
 % %File_List_Creation;
 % [fn, path] = uigetfile( {'*.txt;*.mat','scan file list text file'}, ...
 %      'Select your file list text file');
@@ -20,6 +22,7 @@
 % %load([pwd filesep 'Sample_Data' filesep 'amask.mat']);%%temp
 % cancelled = 0;
 % if (cancelled) return; end; %#ok<UNRCH>
+create_mask(a, b);
 % a = Create_Z(mask, a);
 % a = Standardize_Z(a, mask);
 % load([pwd filesep 'exp2.mat'])

@@ -52,7 +52,6 @@ function create_mask_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to create_mask (see VARARGIN)
-global scan_information
 
 handles.onoff = [{'off'} {'on'}];
 experiments = varargin;
@@ -76,29 +75,27 @@ for i = 2:size(experiments, 2)
 end
 	if ( length(str) == 0 )  str = '*.img'; end;
 	set( handles.txt_image_filter, 'String', str );
-	x = size(subject_vector) > 0;
-	%set( handles.chk_all_subjects, 'Enable', char(handles.onoff(x+1)) );
+	x = size(subject_vector,1) > 0;
+	set( handles.chk_all_subjects, 'Enable', char(handles.onoff(x+1)) );
 	set( handles.chk_all_subjects, 'Value', x );
-	
 	
 	if ( x > 0 )
 		lst = subject_vector(1,1).CommonData.ID_List;
 	end;
-	set( handles.lst_subjects, 'String', lst, 'Value', 1 );
-	
-	x = scan_information.NumRuns > 1;
-	set( handles.chk_all_runs, 'Enable', char(handles.onoff(x+1)) );
-	set( handles.chk_all_runs, 'Value', x );
-	set( handles.lst_subject_runs, 'Enable', char(handles.onoff(x+1)) );
-	
-	lst = [];
-	if ( x )
-		for ( ii = 1:scan_information.NumRuns)
-			str = sprintf( 'Run %d', ii );
-			lst = [lst; {str}];
-		end;
-	end;
-	set( handles.lst_subject_runs, 'String', lst, 'Value', 1 );
+	set( handles.lst_subjects, 'String', lst, 'Value', 1,'Max', size(subject_vector,1));
+	runlist = get_run_list(subject_vector(get(handles.lst_subjects, 'Value'),1));
+	multi_run = 0;
+	for i=1:size(subject_vector,1)
+		if(length(get_run_list(subject_vector(get(handles.lst_subjects, 'Value'),1)))>1)
+			multi_run=1;
+			break;
+		end
+	end
+	set( handles.chk_all_runs, 'Enable', char(handles.onoff(multi_run+1)) );
+	set( handles.chk_all_runs, 'Value', multi_run );
+	set( handles.lst_subject_runs, 'Enable', char(handles.onoff(multi_run+1)) );
+
+	set( handles.lst_subject_runs, 'String', runlist, 'Value', 1 );
 	
 	if ( ismac )
 		set( handles.txt_destination_folder, 'HorizontalAlignment', 'center' );
@@ -125,7 +122,8 @@ end
 		load( 'mask_stats.mat', 'flag_threshold' );
 		set( handles.txt_flag_reduction_value, 'String',  num2str( flag_threshold ) );
 	end;
-	
+	handles.subject_vector = subject_vector;
+	handles.experiments = experiments;
 	% Update handles structure
 	guidata(hObject, handles);
 	
@@ -235,23 +233,23 @@ end
 
 % --- Executes on button press in chk_all_subjects.
 	function chk_all_subjects_Callback(hObject, eventdata, handles)
-		global scan_information
-		x = get(hObject,'Value');
-		
-		lst = [];
-		for ( ii = 1:size(scan_information.SubjectID,2) )
-			lst = [lst; {char(scan_information.SubjectID(ii))}];
-		end;
-		
-		if ( x )
-			set( handles.lst_subjects, 'String', lst, 'Value', 1 );
-		else
-			[s,v] = listdlg('PromptString','Select subjects','ListString', lst );
-			if ( v );
-				lst2 = lst(s);
-				set( handles.lst_subjects, 'String', lst2, 'Value', 1 );
-			end;
-		end;
+% 		global scan_information
+% 		x = get(hObject,'Value');
+% 		
+% 		lst = [];
+% 		for ( ii = 1:size(scan_information.SubjectID,2) )
+% 			lst = [lst; {char(scan_information.SubjectID(ii))}];
+% 		end;
+% 		
+% 		if ( x )
+% 			set( handles.lst_subjects, 'String', lst, 'Value', 1 );
+% 		else
+% 			[s,v] = listdlg('PromptString','Select subjects','ListString', lst );
+% 			if ( v );
+% 				lst2 = lst(s);
+% 				set( handles.lst_subjects, 'String', lst2, 'Value', 1 );
+% 			end;
+% 		end;
 	end
 
 
@@ -278,7 +276,7 @@ end
 		% ------------------------------------------
 		% --- image list filespec filter
 		% ------------------------------------------
-		filter = get( handles.txt_image_filter, 'String' );
+		filter = strsplit(get( handles.txt_image_filter, 'String' ), ';');
 		
 		% ------------------------------------------
 		% --- create a subject vector for selected subjects
@@ -287,19 +285,10 @@ end
 		SubjectVector = [];
 		
 		if ( x )
-			SubjectVector = [ 1:Zheader.num_subjects ];
+			SubjectVector = handles.subject_vector;
 		else
-			
-			subjectList = get( handles.lst_subjects, 'String' );
-			
-			for ii = 1:size(subjectList,1)
-				for jj = 1:size(scan_information.SubjectID,2)
-					if ( strcmp( char(subjectList(ii)), char(scan_information.SubjectID(jj)) ) )
-						SubjectVector = [SubjectVector jj];
-					end;
-				end
-			end
-			
+			subjectList = get( handles.lst_subjects, 'Value' );
+			SubjectVector = handles.subject_vector(subjectList);
 		end;
 		
 		
